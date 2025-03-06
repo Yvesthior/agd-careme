@@ -10,6 +10,7 @@ export async function GET(request: Request) {
     const entries = await getServerEntries(start, end);
     return NextResponse.json(entries);
   } catch (error) {
+    console.log("erreure", error);
     return NextResponse.json(
       { error: "Failed to fetch entries" },
       { status: 500 }
@@ -26,6 +27,7 @@ export async function POST(request: Request) {
     );
     return NextResponse.json(entry);
   } catch (error) {
+    console.log("erreure", error);
     return NextResponse.json(
       { error: "Failed to create week" },
       { status: 500 }

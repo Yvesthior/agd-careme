@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useUser, SignOutButton } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
@@ -35,17 +35,7 @@ export default function DashboardPage() {
     locale: fr,
   })} au ${format(endDate, "d MMMM yyyy", { locale: fr })}`;
 
-  useEffect(() => {
-    if (isLoaded && !user) {
-      router.push("/sign-in");
-    }
-
-    if (isLoaded && user) {
-      loadEntries();
-    }
-  }, [isLoaded, user, router]);
-
-  const loadEntries = async () => {
+  const loadEntries = useCallback(async () => {
     if (!user) return;
 
     setIsLoading(true);
@@ -62,13 +52,23 @@ export default function DashboardPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [user, startDate, endDate, toast]);
+
+  useEffect(() => {
+    if (isLoaded && !user) {
+      router.push("/sign-in");
+    }
+
+    if (isLoaded && user) {
+      loadEntries();
+    }
+  }, [isLoaded, user, router, loadEntries]);
 
   useEffect(() => {
     if (user) {
       loadEntries();
     }
-  }, [currentDate, user]);
+  }, [currentDate, user, loadEntries]);
 
   const handlePreviousWeek = () => {
     setCurrentDate(subWeeks(currentDate, 1));
@@ -87,6 +87,7 @@ export default function DashboardPage() {
       });
       loadEntries();
     } catch (error) {
+      console.log("erreuer", error);
       toast({
         variant: "destructive",
         title: "Erreur",
@@ -176,7 +177,7 @@ export default function DashboardPage() {
                   </p>
                 </div>
                 <div className="space-y-2">
-                  <h3 className="font-medium">Points d'amélioration</h3>
+                  <h3 className="font-medium">Points d&apos;amélioration</h3>
                   <p className="text-sm text-muted-foreground">
                     {entries[0].improvements ||
                       "Aucun point d'amélioration noté pour cette semaine"}

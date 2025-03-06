@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
+import type { DayEntry } from "@/types/entries";
 
 export async function PUT(
   request: Request,
@@ -27,7 +28,7 @@ export async function PUT(
         improvements: entryData.improvements,
         successes: entryData.successes,
         days: {
-          upsert: entryData.days.map((day: any) => ({
+          upsert: entryData.days.map((day: DayEntry) => ({
             where: { id: day.id },
             create: {
               date: new Date(day.date),

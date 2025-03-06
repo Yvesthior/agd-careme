@@ -48,5 +48,5 @@ export async function updateWeeklyEntry(
 }
 
 export async function getEntries() {
-  return await db.entry.findMany();
+  return await db.weeklyEntry.findMany();
 }
